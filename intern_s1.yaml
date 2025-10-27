@@ -7,15 +7,15 @@ model:
   lora_attn_modules: ['q_proj', 'k_proj', 'v_proj', 'output_proj']
   apply_lora_to_mlp: True
   apply_lora_to_output: True
-  lora_rank: 32  # higher increases accuracy and memory
-  lora_alpha: 64  # usually alpha=2*rank
+  lora_rank: 16  # higher increases accuracy and memory
+  lora_alpha: 32  # usually alpha=2*rank
   lora_dropout: 0.0
 
 tokenizer:
   _component_: torchtune.models.intern_s1.intern_s1_tokenizer
   path: ${model_root}/vocab.json
   merges_file: ${model_root}/merges.txt
-  max_seq_len: null
+  max_seq_len: 1536
 
 checkpointer:
   _component_: torchtune.training.FullModelHFCheckpointer
@@ -39,9 +39,10 @@ dataset:
     input: prompt
     output: completion
   packed: False  # True increases speed
+  train_on_input: False
 seed: null
 shuffle: True
-batch_size: 128
+batch_size: 64
 
 # Optimizer and Scheduler
 optimizer:
@@ -51,13 +52,13 @@ optimizer:
   lr: 3e-4
 lr_scheduler:
   _component_: torchtune.training.lr_schedulers.get_cosine_schedule_with_warmup
-  num_warmup_steps: 512
+  num_warmup_steps: 1024
 optimizer_in_bwd: False  # True saves memory. Requires gradient_accumulation_steps=1
 loss:
   _component_: torchtune.modules.loss.LinearCrossEntropyLoss
 
 # Training
-epochs: 8
+epochs: 2
 max_steps_per_epoch: null
 gradient_accumulation_steps: 1  # Use to increase effective batch size
 
@@ -66,8 +67,8 @@ compile: True
 
 # Logging
 metric_logger:
-  _component_: torchtune.training.metric_logging.DiskLogger
-  log_dir: ${output_dir}/logs
+  _component_: torchtune.training.metric_logging.WandBLogger
+  project: s1_hvm_binding
 log_every_n_steps: 1
 log_peak_memory_stats: True
 log_level: INFO  # DEBUG, WARN, etc.
