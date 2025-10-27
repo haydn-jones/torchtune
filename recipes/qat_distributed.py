@@ -283,7 +283,9 @@ class QATRecipeDistributed(FTRecipeInterface):
         # These are public properties which are updated by the checkpoint loader
         # when ``resume_from_checkpoint`` is `True` or validated in tests
         self.seed = training.set_seed(
-            seed=cfg.seed, debug_mode=cfg.get("cudnn_deterministic_mode", None)
+            seed=cfg.seed,
+            debug_mode=cfg.get("cudnn_deterministic_mode", None),
+            offset_torch_seed_by_rank=False,
         )
         self.epochs_run = 0
         self.total_epochs = cfg.epochs

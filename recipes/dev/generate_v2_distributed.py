@@ -97,7 +97,9 @@ class InferenceRecipe:
         _, rank = utils.get_world_size_and_rank()
         self._is_rank_zero = rank == 0
         training.set_seed(
-            seed=cfg.seed, debug_mode=cfg.get("cudnn_deterministic_mode", None)
+            seed=cfg.seed,
+            debug_mode=cfg.get("cudnn_deterministic_mode", None),
+            offset_torch_seed_by_rank=False,
         )
 
     def setup(self, cfg: DictConfig) -> None:

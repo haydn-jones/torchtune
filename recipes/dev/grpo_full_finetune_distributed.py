@@ -65,7 +65,10 @@ class GRPOFullFinetuneRecipeDistributed(FTRecipeInterface):
         self._compile = cfg.get("compile", False)
 
         # Recipe state attributes
-        self.seed = training.set_seed(seed=cfg.seed)
+        self.seed = training.set_seed(
+            seed=cfg.seed,
+            offset_torch_seed_by_rank=False,
+        )
         self.total_epochs = cfg.epochs
         self.global_step = 0
         self._steps_run = 0

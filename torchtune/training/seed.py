@@ -20,7 +20,9 @@ _log: logging.Logger = get_logger()
 
 
 def set_seed(
-    seed: Optional[int] = None, debug_mode: Optional[Union[str, int]] = None
+    seed: Optional[int] = None,
+    debug_mode: Optional[Union[str, int]] = None,
+    offset_torch_seed_by_rank: bool = True,
 ) -> int:
     """Function that sets seed for pseudo-random number generators across commonly used libraries.
 
@@ -31,6 +33,9 @@ def set_seed(
     Args:
         seed (Optional[int]): the integer value seed. If `None`, a random seed will be generated and set.
         debug_mode (Optional[Union[str, int]]): Controls debug_mode settings for deterministic operations within PyTorch.
+        offset_torch_seed_by_rank (bool): When ``True`` (default), calls to ``torch.manual_seed`` are offset per rank
+            (``seed + rank``). Set to ``False`` to seed PyTorch with the same value on every rank, which is required
+            when using DTensor SPMD operations.
 
             * If `None`, don't set any PyTorch global values.
             * If "default" or 0, don't error or warn on nondeterministic operations and additionally enable PyTorch CuDNN benchmark.
@@ -56,12 +61,20 @@ def set_seed(
             f"Invalid seed value provided: {seed}. Value must be in the range [{min_val}, {max_val}]"
         )
     local_seed = seed + rank
+    torch_seed = local_seed if offset_torch_seed_by_rank else seed
     if rank == 0:
-        _log.debug(
-            f"Setting manual seed to local seed {local_seed}. Local seed is seed + rank = {seed} + {rank}"
-        )
+        if offset_torch_seed_by_rank:
+            _log.debug(
+                f"Setting torch manual seed to local seed {local_seed}. "
+                f"Local seed is seed + rank = {seed} + {rank}"
+            )
+        else:
+            _log.debug(
+                f"Setting torch manual seed to shared seed {torch_seed} across ranks. "
+                f"NumPy and python.random continue to use local seed = {seed} + {rank}"
+            )
 
-    torch.manual_seed(local_seed)
+    torch.manual_seed(torch_seed)
     np.random.seed(local_seed)
     random.seed(local_seed)
 
