@@ -187,3 +187,6 @@ cover/
 
 # wandb
 wandb/
+uv.lock
+model
+data
