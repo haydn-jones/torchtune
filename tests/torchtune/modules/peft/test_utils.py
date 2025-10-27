@@ -254,24 +254,16 @@ class TestPeftUtils:
                 raise AssertionError(f"{k} not in expected keys")
 
     @pytest.mark.parametrize(
-        (
-            """
-            lora_attn_modules,
-            apply_lora_to_mlp,
-            apply_lora_to_output,
-            state_dict_keys,
-            base_missing,
-            base_unexpected,
-            lora_missing,
-            lora_unexpected,
-            expected
-            """
-        ),
+        """
+        state_dict_keys,
+        base_missing,
+        base_unexpected,
+        lora_missing,
+        lora_unexpected,
+        expected
+        """,
         [
             (
-                ["q_proj", "k_proj"],
-                False,
-                False,
                 ["q_proj.lora_a.weight", "dummy_param.weight"],
                 ["q_proj.lora_a.weight"],
                 [],
@@ -280,9 +272,6 @@ class TestPeftUtils:
                 "",
             ),
             (
-                ["v_proj"],
-                False,
-                False,
                 ["param_a", "param_b"],
                 [],
                 [],
@@ -291,9 +280,6 @@ class TestPeftUtils:
                 "",
             ),
             (
-                ["output_proj"],
-                False,
-                True,
                 ["output_proj.lora_a.weight", "output_proj.weight"],
                 ["output_proj.lora_a.weight"],
                 [],
@@ -302,9 +288,6 @@ class TestPeftUtils:
                 "",
             ),
             (
-                ["q_proj"],
-                False,
-                False,
                 ["param_a", "param_b"],
                 ["param_a"],
                 [],
@@ -313,9 +296,6 @@ class TestPeftUtils:
                 "Missing non-LoRA",
             ),
             (
-                ["k_proj", "output_proj"],
-                False,
-                True,
                 ["k_proj.lora_a.weight", "k_proj.weight"],
                 [],
                 [],
@@ -324,9 +304,6 @@ class TestPeftUtils:
                 "Missing LoRA key",
             ),
             (
-                ["q_proj", "k_proj"],
-                True,
-                False,
                 ["q_proj.lora", "k_proj.lora"],
                 ["k_proj.lora"],
                 [],
@@ -335,9 +312,6 @@ class TestPeftUtils:
                 "Missing LoRA",
             ),
             (
-                ["q_proj", "k_proj"],
-                True,
-                False,
                 ["q_proj.magnitude", "k_proj.lora"],
                 ["k_proj.lora"],
                 [],
@@ -346,9 +320,6 @@ class TestPeftUtils:
                 "Missing LoRA",
             ),
             (
-                ["q_proj", "k_proj"],
-                True,
-                False,
                 ["q_proj.base_weight", "k_proj.lora"],
                 ["k_proj.lora"],
                 ["output.weight"],
@@ -357,9 +328,6 @@ class TestPeftUtils:
                 "loading base model",
             ),
             (
-                ["q_proj", "k_proj"],
-                True,
-                False,
                 ["q_proj.base_weight", "k_proj.lora"],
                 ["k_proj.lora"],
                 [],
@@ -368,9 +336,6 @@ class TestPeftUtils:
                 "loading adapter",
             ),
             (
-                ["q_proj", "k_proj"],
-                True,
-                False,
                 ["q_proj.base_weight", "k_proj.lora"],
                 ["k_proj.lora"],
                 [],
@@ -382,9 +347,6 @@ class TestPeftUtils:
     )
     def test_validate_missing_and_unexpected_for_lora(
         self,
-        lora_attn_modules,
-        apply_lora_to_mlp,
-        apply_lora_to_output,
         state_dict_keys,
         base_missing,
         base_unexpected,
@@ -395,25 +357,19 @@ class TestPeftUtils:
         if expected:
             with pytest.raises(RuntimeError, match=expected):
                 validate_missing_and_unexpected_for_lora(
-                    lora_attn_modules,
-                    apply_lora_to_mlp,
-                    apply_lora_to_output,
-                    state_dict_keys,
-                    base_missing,
-                    base_unexpected,
-                    lora_missing,
-                    lora_unexpected,
+                    state_dict_keys=tuple(state_dict_keys),
+                    base_missing=base_missing,
+                    base_unexpected=base_unexpected,
+                    lora_missing=lora_missing,
+                    lora_unexpected=lora_unexpected,
                 )
         else:
             validate_missing_and_unexpected_for_lora(
-                lora_attn_modules,
-                apply_lora_to_mlp,
-                apply_lora_to_output,
-                state_dict_keys,
-                base_missing,
-                base_unexpected,
-                lora_missing,
-                lora_unexpected,
+                state_dict_keys=tuple(state_dict_keys),
+                base_missing=base_missing,
+                base_unexpected=base_unexpected,
+                lora_missing=lora_missing,
+                lora_unexpected=lora_unexpected,
             )
 
 
