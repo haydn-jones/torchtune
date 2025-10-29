@@ -190,3 +190,5 @@ wandb/
 uv.lock
 model
 data
+checkpoints
+CLAUDE.md

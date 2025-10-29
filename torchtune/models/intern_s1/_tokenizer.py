@@ -44,8 +44,14 @@ class InternS1Tokenizer(Qwen3Tokenizer):  # noqa: N801
         )
 
         self.hf_tokenizer = AutoTokenizer.from_pretrained(
-            "internlm/Intern-S1-mini", trust_remote_code=True
+            "haydn-jones/Intern-S1-mini-Qwen3-8B",
+            trust_remote_code=True,
         )
+        print("!" * 80)
+        print("USING PATCHED INTERN S1 TOKENIZER THAT PROPERLY HANDLES <FASTA>")
+        print("USING PATCHED INTERN S1 TOKENIZER THAT PROPERLY HANDLES <FASTA>")
+        print("USING PATCHED INTERN S1 TOKENIZER THAT PROPERLY HANDLES <FASTA>")
+        print("!" * 80)
 
     def encode(
         self, text: str, add_bos: bool = True, add_eos: bool = True
