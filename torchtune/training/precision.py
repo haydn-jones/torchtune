@@ -40,9 +40,9 @@ def _set_float32_precision(precision: str = "high") -> None:
     torch.set_float32_matmul_precision(precision)
     # set precision for convolution operations
     if precision == "highest":
-        torch.backends.cudnn.allow_tf32 = False
+        torch.set_float32_matmul_precision("highest")
     else:
-        torch.backends.cudnn.allow_tf32 = True
+        torch.set_float32_matmul_precision("high")
 
 
 def verify_bf16_support() -> bool:

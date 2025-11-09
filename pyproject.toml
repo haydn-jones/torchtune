@@ -5,16 +5,16 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11,<3.14"
 dependencies = [
+    "bitsandbytes>=0.48.1",
     "blobfile>=2",
     "datasets>=4.3.0",
     "huggingface-hub[hf-transfer]>=0.36.0",
-    "ipython>=9.6.0",
     "kagglehub>=0.3.13",
     "numpy>=2.3.4",
     "omegaconf>=2.3.0",
+    "peft>=0.17.1",
     "pillow>=12.0.0",
     "psutil>=7.1.2",
-    "rdkit>=2025.9.1",
     "safetensors>=0.6.2",
     "sentencepiece>=0.2.1",
     "tiktoken>=0.12.0",
@@ -33,16 +33,6 @@ tune = "torchtune._cli.tune:main"
 [build-system]
 requires = ["uv_build>=0.8.5"]
 build-backend = "uv_build"
-
-[tool.uv.sources]
-torch = { index = "pytorch" }
-torchvision = { index = "pytorch" }
-torchao = { index = "pytorch" }
-
-[[tool.uv.index]]
-name = "pytorch"
-url = "https://download.pytorch.org/whl/cu129"
-explicit = true
 
 [tool.uv.build-backend]
 module-name = "torchtune"
